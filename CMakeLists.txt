@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.4.0)
-project(Hades LANGUAGE C CXX)
+cmake_minimum_required(VERSION 4.2.0)
+project(Hades LANGUAGES C CXX)
 
 if(MINGW)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++ -static")
@@ -21,6 +21,12 @@ set(SOURCES
 
 add_executable(app ${SOURCES})
 
-target_include_directories(app PRIVATE 
+target_link_libraries(app PRIVATE
+    user32
+    opengl32
+    gdi32
+)
+
+target_include_directories(app PRIVATE
     ${CMAKE_SOURCE_DIR}/include
 )

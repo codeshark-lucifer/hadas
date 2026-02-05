@@ -8,7 +8,7 @@ BumpAllocator MakeAllocator(size_t size)
     ba.memory = (char *)malloc(size);
     if (ba.memory)
     {
-        ba.capacity = 0;
+        ba.capacity = size;
         memset(ba.memory, 0, size);
     }
     else
@@ -63,7 +63,7 @@ long get_file_size(char *filepath)
     auto file = fopen(filepath, "rb");
     if (!file)
     {
-        LOG_ERROR("Failed openging File: %s", filepath);
+        LOG_ERROR("Failed opening File: %s", filepath);
         return 0;
     }
 
@@ -118,10 +118,15 @@ char *read_file(char *filepath, int *size, BumpAllocator *bumpAllocator)
 {
     char *file = nullptr;
     long fileSize = get_file_size(filepath);
+
     if (fileSize)
     {
         char *buffer = BumpAlloc(bumpAllocator, fileSize + 1);
-        file = read_file(filepath, size, buffer);
+        if (buffer) { // Ensure buffer was successfully allocated
+            file = read_file(filepath, size, buffer);
+        } else {
+            LOG_ERROR("read_file (BumpAllocator): Failed to allocate buffer for file %s", filepath);
+        }
     }
     return file;
 }
@@ -160,3 +165,4 @@ bool copy_file(char *filename, char *outputName, BumpAllocator *bumpAllocator)
     }
     return false;
 }
+
