@@ -13,7 +13,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-file(GLOB_RECURSE SOURCES src/*.cpp)
+set(SOURCES
+    src/main.cpp
+    src/core/platform.cpp
+    src/core/utils.cpp
+)
 
 add_executable(app ${SOURCES})
 
