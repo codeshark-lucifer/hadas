@@ -2,6 +2,7 @@
 #include <platform.h>
 #include <gl_renderer.hpp>
 #include <config.h>
+#include <game.h>
 
 ScreenSize screen;
 int main()
@@ -24,7 +25,7 @@ int main()
     {
         WinEvent event;
         PollEvent(&event);
-
+        Update();
         glRender();
         SwapBuffersWindow();
     }

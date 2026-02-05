@@ -1,4 +1,8 @@
 #pragma once
+#include "color.h"
+#include "matrix.h"
+#include "quat.h"
+#include "vector.h"
 #include <cmath>
 
 constexpr float PI = 3.14159265358979323846f;

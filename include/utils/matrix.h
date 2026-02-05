@@ -218,7 +218,7 @@ struct mat4
         return r;
     }
 
-    static mat4 Perspective(float fovRadians, float aspect, float near, float far)
+    static mat4 Perspective(float fovRadians, float aspect, float nearPlane, float farPlane)
     {
         mat4 r;
 
@@ -226,24 +226,24 @@ struct mat4
 
         r.m[0] = 1.0f / (aspect * tanHalfFov);
         r.m[5] = 1.0f / tanHalfFov;
-        r.m[10] = -(far + near) / (far - near);
+        r.m[10] = -(farPlane + nearPlane) / (farPlane - nearPlane);
         r.m[11] = -1.0f;
-        r.m[14] = -(2.0f * far * near) / (far - near);
+        r.m[14] = -(2.0f * farPlane * nearPlane) / (farPlane - nearPlane);
 
         return r;
     }
 
-    static mat4 Ortho(float left, float right, float bottom, float top, float near, float far)
+    static mat4 Ortho(float left, float right, float bottom, float top, float nearPlane, float farPlane)
     {
         mat4 r = mat4::Identity();
 
         r.m[0] = 2.0f / (right - left);
         r.m[5] = 2.0f / (top - bottom);
-        r.m[10] = -2.0f / (far - near);
+        r.m[10] = -2.0f / (farPlane - nearPlane);
 
         r.m[12] = -(right + left) / (right - left);
         r.m[13] = -(top + bottom) / (top - bottom);
-        r.m[14] = -(far + near) / (far - near);
+        r.m[14] = -(farPlane + nearPlane) / (farPlane - nearPlane);
 
         return r;
     }
@@ -277,3 +277,15 @@ struct mat4
 };
 
 
+mat3::mat3(const mat4 &mat4_)
+{
+    m[0] = mat4_.m[0];
+    m[1] = mat4_.m[1];
+    m[2] = mat4_.m[2];
+    m[3] = mat4_.m[4];
+    m[4] = mat4_.m[5];
+    m[5] = mat4_.m[6];
+    m[6] = mat4_.m[8];
+    m[7] = mat4_.m[9];
+    m[8] = mat4_.m[10];
+}

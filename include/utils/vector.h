@@ -1,6 +1,7 @@
 #pragma once
 #include <cmath>
 
+
 struct vec2
 {
     float x, y;
@@ -135,3 +136,41 @@ inline vec3 operator*(float s, const vec3 &v)
 {
     return {v.x * s, v.y * s, v.z * s};
 }
+
+struct ivec2
+{
+    int x, y;
+
+    ivec2() : x(0), y(0) {}
+    ivec2(int v) : x(v), y(v) {}
+    ivec2(int x, int y) : x(x), y(y) {}
+
+    // Construct from vec2 (explicit on purpose)
+    explicit ivec2(const vec2 &v)
+        : x(static_cast<int>(v.x)),
+          y(static_cast<int>(v.y)) {}
+
+    ivec2 operator+(const ivec2 &v) const { return {x + v.x, y + v.y}; }
+    ivec2 operator-(const ivec2 &v) const { return {x - v.x, y - v.y}; }
+    ivec2 operator*(int s) const { return {x * s, y * s}; }
+    ivec2 operator/(int s) const { return {x / s, y / s}; }
+
+    ivec2 &operator+=(const ivec2 &v)
+    {
+        x += v.x;
+        y += v.y;
+        return *this;
+    }
+
+    ivec2 &operator-=(const ivec2 &v)
+    {
+        x -= v.x;
+        y -= v.y;
+        return *this;
+    }
+
+    static int Dot(const ivec2 &a, const ivec2 &b)
+    {
+        return a.x * b.x + a.y * b.y;
+    }
+};
