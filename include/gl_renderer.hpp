@@ -4,6 +4,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include "utils/color.h"
+
 struct GLContext
 {
   GLuint programID;
@@ -175,7 +177,9 @@ bool glInit(BumpAllocator *transientStorage)
 
 void glRender()
 {
-  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  float gamma = 1.0f;
+  Color bg_color = {0.01f, 0.01f, 0.01f, 1.0f};
+  glClearColor(pow(bg_color.r, gamma), pow(bg_color.g, gamma), pow(bg_color.b, gamma), bg_color.a);
   glClearDepth(0.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glViewport(0, 0, screen.width, screen.height);
