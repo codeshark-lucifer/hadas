@@ -1,7 +1,11 @@
 #pragma once
 #include "utils/mathf.h"
+#include "utils.h"
+
 enum KeyCodeID
 {
+    KEY_INVALID = 0,
+
     KEY_MOUSE_LEFT,
     KEY_MOUSE_MIDDLE,
     KEY_MOUSE_RIGHT,
@@ -78,7 +82,6 @@ enum KeyCodeID
     KEY_SHIFT,
     KEY_CONTROL,
     KEY_ALT,
-    KEY_COMMAND,
 
     KEY_F1,
     KEY_F2,
@@ -104,13 +107,7 @@ enum KeyCodeID
     KEY_NUMPAD_8,
     KEY_NUMPAD_9,
 
-    KEY_NUMPAD_STAR,
-    KEY_NUMPAD_PLUS,
-    KEY_NUMPAD_MINUS,
-    KEY_NUMPAD_DOT,
-    KEY_NUMPAD_SLASH,
-
-    KEY_COUNT = 255,
+    KEY_COUNT
 };
 
 struct Key
@@ -139,4 +136,30 @@ struct Input
 };
 
 static Input *input;
-static KeyCodeID KeyCodeLookupTable[KEY_COUNT];
+static KeyCodeID KeyCodeLookupTable[256];
+
+bool IsKeyRelased(KeyCodeID keyCode);
+bool IsKeyDown(KeyCodeID keyCode);
+bool IsKeyPressed(KeyCodeID keyCode);
+
+// Check if key pressed in this frame
+inline bool IsKeyPressed(KeyCodeID keyCode)
+{
+    Key key = input->keys[keyCode];
+    bool result = key.isDown && key.halfTransitionCount == 1 || key.halfTransitionCount > 1;
+    return result;
+}
+
+// Check if Key release in this frame
+inline bool IsKeyRelased(KeyCodeID keyCode)
+{
+    Key key = input->keys[keyCode];
+    bool result = !key.isDown && key.halfTransitionCount == 1 || key.halfTransitionCount > 1;
+    return result;
+}
+
+// Check if Key down in this frame
+inline bool IsKeyDown(KeyCodeID keyCode)
+{
+    return input->keys[keyCode].isDown;
+}

@@ -3,8 +3,6 @@
 #include "assets.h"
 #include "utils.h"
 
-RenderData *renderData; // Global definition for renderData within the DLL
-
 // Update Game Logic
 EXPORT_FN void Update(RenderData *renderDataIn, Input *inputIn)
 {

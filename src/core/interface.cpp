@@ -1,7 +1,7 @@
 #include "interface.h"
 #include "utils.h"
-#include "utils/matrix.h"
 
+RenderData *renderData = nullptr;
 void DrawSprite(SpriteID spriteID, vec2 pos, vec2 size)
 {
     // LOG_DEBUG("interface.cpp: DrawSprite - renderData = %p", renderData);
@@ -20,15 +20,23 @@ void DrawSprite(SpriteID spriteID, vec2 pos, vec2 size)
     renderData->transforms[renderData->transformCount++] = transform;
 }
 
-mat3::mat3(const mat4 &mat4_)
+vec2 ScreenToWorld(Input *inputIn)
 {
-    m[0] = mat4_.m[0];
-    m[1] = mat4_.m[1];
-    m[2] = mat4_.m[2];
-    m[3] = mat4_.m[4];
-    m[4] = mat4_.m[5];
-    m[5] = mat4_.m[6];
-    m[6] = mat4_.m[8];
-    m[7] = mat4_.m[9];
-    m[8] = mat4_.m[10];
+    ivec2 screenPos = inputIn->mousePos;
+    Camera2D camera = renderData->gameCamera;
+    
+    float xPos = (float)screenPos.x /
+    inputIn->size.x /
+    camera.dimention.x;
+    
+    xPos += -camera.dimention.x / 2.0f + camera.position.x;
+    
+    float yPos = (float)screenPos.y /
+    inputIn->size.y /
+    camera.dimention.y;
+    
+    yPos += camera.dimention.y / 2.0f - camera.position.y;
+    
+    return {xPos, yPos};
 }
+

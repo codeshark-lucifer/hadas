@@ -5,6 +5,7 @@
 #include "stb_image.h"
 
 #include "utils/mathf.h"
+#include "interface.h"
 
 struct GLContext
 {
@@ -12,7 +13,6 @@ struct GLContext
   GLuint textureID;
   GLuint VAO;
   GLuint transformSBOID;
-  RenderData *renderDataPtr;
   //   GLuint materialSBOID;
   GLuint screenSizeID;
   GLuint orthoProjectionID;
@@ -42,7 +42,7 @@ static void APIENTRY gl_debug_callback(GLenum source, GLenum type, GLuint id, GL
 
 bool glInit(BumpAllocator *transientStorage, RenderData *renderDataPtr)
 {
-  glContext.renderDataPtr = renderDataPtr;
+  renderData = renderDataPtr;
   glLoadFunc();
 
   glDebugMessageCallback(&gl_debug_callback, nullptr);
@@ -166,7 +166,7 @@ bool glInit(BumpAllocator *transientStorage, RenderData *renderDataPtr)
     glGenBuffers(1, &glContext.transformSBOID);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, glContext.transformSBOID);
     glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Transform) * MAX_TRANSFORMS,
-                 glContext.renderDataPtr->transforms, GL_DYNAMIC_DRAW);
+                 renderData->transforms, GL_DYNAMIC_DRAW);
   }
   glUseProgram(glContext.programID);
 
@@ -200,7 +200,7 @@ void glRender()
   glViewport(0, 0, input->size.x, input->size.y);
 
   glUseProgram(glContext.programID);
-  glUniformMatrix4fv(glContext.orthoProjectionID, 1, GL_FALSE, glContext.renderDataPtr->gameCamera.matrix().m);
+  glUniformMatrix4fv(glContext.orthoProjectionID, 1, GL_FALSE, renderData->gameCamera.matrix().m);
 
   vec2 screen_size = {(float)input->size.x, (float)input->size.y};
   glUniform2fv(glContext.screenSizeID, 1, &screen_size.x);
@@ -209,11 +209,11 @@ void glRender()
   glBindTexture(GL_TEXTURE_2D, glContext.textureID);
 
   {
-    glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(Transform) * glContext.renderDataPtr->transformCount,
-                    glContext.renderDataPtr->transforms);
-    glDrawArraysInstanced(GL_TRIANGLES, 0, 6, glContext.renderDataPtr->transformCount);
+    glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(Transform) * renderData->transformCount,
+                    renderData->transforms);
+    glDrawArraysInstanced(GL_TRIANGLES, 0, 6, renderData->transformCount);
 
-    glContext.renderDataPtr->transformCount = 0;
+    renderData->transformCount = 0;
   }
 
   glBindVertexArray(0);

@@ -1,10 +1,10 @@
 #include <utils.h>
 #include <config.hpp>
-
 #include <platform.h>
 #include <gl_renderer.hpp>
 #include <game.h>
 #include <render_types.h> // Include render_types.h to get RenderData struct definition
+#include <interface.h>
 
 typedef decltype(Update) UpdateGameType;
 static UpdateGameType *update_game_ptr;
@@ -23,14 +23,14 @@ int main()
     input->size.y = 540;
 
     WinInfo info = {};
-    info.width = input->size.x;
-    info.height = input->size.y;
+    info.input = input;
     info.title = "Hades";
 
-    RenderData* exeRenderData = (RenderData *)BumpAlloc(&persistentStorage, sizeof(RenderData));
+    RenderData *exeRenderData = (RenderData *)BumpAlloc(&persistentStorage, sizeof(RenderData));
     LOG_ASSERT(exeRenderData, "Failed to allocate RenderData");
     memset(exeRenderData, 0, sizeof(RenderData));
 
+    PlatformFillKeyCodeLookupTable();
     Window window = CreatePlatformWindow(info);
     LOG_ASSERT(window, "Failed to create Window!");
 
@@ -42,12 +42,12 @@ int main()
     {
         ReloadGameDll(&transientStorage);
         exeRenderData->transformCount = 0;
-
+        
         WinEvent event;
-        PollEvent(&event);
-
+        PollEvent(&event, input);
+        
         update_game_ptr(exeRenderData, input);
-
+        
         glRender();
         SwapBuffersWindow();
 

@@ -17,6 +17,8 @@ add_executable(app
     src/main.cpp
     src/core/utils.cpp
     src/core/platform.cpp
+    src/core/interface.cpp
+    src/core/assets.cpp
 )
 
 target_include_directories(app PRIVATE
