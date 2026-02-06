@@ -135,7 +135,7 @@ struct Input
     Key keys[KEY_COUNT];
 };
 
-static Input *input;
+extern Input *input;
 static KeyCodeID KeyCodeLookupTable[256];
 
 bool IsKeyRelased(KeyCodeID keyCode);

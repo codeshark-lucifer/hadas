@@ -43,3 +43,4 @@ void *LoadDynamicLibrary(const char *dll);
 void *LoadDynamicFunc(void *dll, const char *funcName);
 
 void PlatformFillKeyCodeLookupTable();
+void SetTitleBarColor(HWND hwnd, COLORREF color);

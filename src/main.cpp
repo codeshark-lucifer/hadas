@@ -6,11 +6,12 @@
 #include <render_types.h> // Include render_types.h to get RenderData struct definition
 #include <interface.h>
 
+GameState *gameState = nullptr;
+
 typedef decltype(Update) UpdateGameType;
 static UpdateGameType *update_game_ptr;
 
 void ReloadGameDll(BumpAllocator *transientStroage);
-
 int main()
 {
     BumpAllocator transientStorage = MakeAllocator(MB(50));
@@ -33,7 +34,9 @@ int main()
     PlatformFillKeyCodeLookupTable();
     Window window = CreatePlatformWindow(info);
     LOG_ASSERT(window, "Failed to create Window!");
+    SetTitleBarColor(window, RGB(25, 25, 25));
 
+    gameState = new GameState();
     LOG_ASSERT(glInit(&transientStorage, exeRenderData), "Failed to initialize OpenGL");
     LOG_DEBUG("EXE renderData = %p", exeRenderData);
     LOG_DEBUG("DLL renderData = %p", exeRenderData);
@@ -42,18 +45,18 @@ int main()
     {
         ReloadGameDll(&transientStorage);
         exeRenderData->transformCount = 0;
-        
+
         WinEvent event;
         PollEvent(&event, input);
-        
+
         update_game_ptr(exeRenderData, input);
-        
+
         glRender();
         SwapBuffersWindow();
 
         transientStorage.used = 0;
     }
-
+    delete gameState;
     return EXIT_SUCCESS;
 }
 

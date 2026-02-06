@@ -3,6 +3,7 @@
 #include "assets.h"
 #include "utils.h"
 
+Input *input = nullptr;
 // Update Game Logic
 EXPORT_FN void Update(RenderData *renderDataIn, Input *inputIn)
 {

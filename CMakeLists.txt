@@ -29,6 +29,7 @@ target_link_libraries(app PRIVATE
     user32
     opengl32
     gdi32
+    dwmapi
 )
 
 add_library(game SHARED
