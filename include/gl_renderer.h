@@ -3,6 +3,7 @@
 #include "GL/glcorearb.h"
 #include "platform.h"
 #include "utils.h"
+#include "render_types.h"
 
 static PFNGLCREATEPROGRAMPROC glCreateProgram_ptr;
 static PFNGLDELETETEXTURESPROC glDeleteTextures_ptr;
@@ -67,59 +68,59 @@ void glLoadFunc()
         LOG_ASSERT(false, "Failed to load gl function %s", "glCreateProgram");
     }
 
-    glCreateProgram_ptr = (PFNGLCREATEPROGRAMPROC)LoadGLFunc((char *)"glCreateProgram");
-    glDeleteTextures_ptr = (PFNGLDELETETEXTURESPROC)LoadGLFunc((char *)"glDeleteTextures");
-    glGenTextures_ptr = (PFNGLGENTEXTURESPROC)LoadGLFunc((char *)"glGenTextures");
-    glBindTexture_ptr = (PFNGLBINDTEXTUREPROC)LoadGLFunc((char *)"glBindTexture");
-    glDrawArrays_ptr = (PFNGLDRAWARRAYSPROC)LoadGLFunc((char *)"glDrawArrays");
-    glCreateShader_ptr = (PFNGLCREATESHADERPROC)LoadGLFunc((char *)"glCreateShader");
-    glGetUniformLocation_ptr = (PFNGLGETUNIFORMLOCATIONPROC)LoadGLFunc((char *)"glGetUniformLocation");
-    glUniform1f_ptr = (PFNGLUNIFORM1FPROC)LoadGLFunc((char *)"glUniform1f");
-    glUniform2fv_ptr = (PFNGLUNIFORM2FVPROC)LoadGLFunc((char *)"glUniform2fv");
-    glUniform3fv_ptr = (PFNGLUNIFORM3FVPROC)LoadGLFunc((char *)"glUniform3fv");
-    glUniform1i_ptr = (PFNGLUNIFORM1IPROC)LoadGLFunc((char *)"glUniform1i");
-    glUniformMatrix4fv_ptr = (PFNGLUNIFORMMATRIX4FVPROC)LoadGLFunc((char *)"glUniformMatrix4fv");
-    glVertexAttribDivisor_ptr = (PFNGLVERTEXATTRIBDIVISORPROC)LoadGLFunc((char *)"glVertexAttribDivisor");
-    glActiveTexture_ptr = (PFNGLACTIVETEXTUREPROC)LoadGLFunc((char *)"glActiveTexture");
-    glBufferSubData_ptr = (PFNGLBUFFERSUBDATAPROC)LoadGLFunc((char *)"glBufferSubData");
-    glDrawArraysInstanced_ptr = (PFNGLDRAWARRAYSINSTANCEDPROC)LoadGLFunc((char *)"glDrawArraysInstanced");
-    glBindFramebuffer_ptr = (PFNGLBINDFRAMEBUFFERPROC)LoadGLFunc((char *)"glBindFramebuffer");
-    glCheckFramebufferStatus_ptr = (PFNGLCHECKFRAMEBUFFERSTATUSPROC)LoadGLFunc((char *)"glCheckFramebufferStatus");
-    glGenFramebuffers_ptr = (PFNGLGENFRAMEBUFFERSPROC)LoadGLFunc((char *)"glGenFramebuffers");
-    glFramebufferTexture2D_ptr = (PFNGLFRAMEBUFFERTEXTURE2DPROC)LoadGLFunc((char *)"glFramebufferTexture2D");
-    glDrawBuffers_ptr = (PFNGLDRAWBUFFERSPROC)LoadGLFunc((char *)"glDrawBuffers");
-    glDeleteFramebuffers_ptr = (PFNGLDELETEFRAMEBUFFERSPROC)LoadGLFunc((char *)"glDeleteFramebuffers");
-    glBlendFunci_ptr = (PFNGLBLENDFUNCIPROC)LoadGLFunc((char *)"glBlendFunci");
-    glBlendEquation_ptr = (PFNGLBLENDEQUATIONPROC)LoadGLFunc((char *)"glBlendEquation");
-    glClearBufferfv_ptr = (PFNGLCLEARBUFFERFVPROC)LoadGLFunc((char *)"glClearBufferfv");
-    glShaderSource_ptr = (PFNGLSHADERSOURCEPROC)LoadGLFunc((char *)"glShaderSource");
-    glCompileShader_ptr = (PFNGLCOMPILESHADERPROC)LoadGLFunc((char *)"glCompileShader");
-    glGetShaderiv_ptr = (PFNGLGETSHADERIVPROC)LoadGLFunc((char *)"glGetShaderiv");
-    glGetShaderInfoLog_ptr = (PFNGLGETSHADERINFOLOGPROC)LoadGLFunc((char *)"glGetShaderInfoLog");
-    glAttachShader_ptr = (PFNGLATTACHSHADERPROC)LoadGLFunc((char *)"glAttachShader");
-    glLinkProgram_ptr = (PFNGLLINKPROGRAMPROC)LoadGLFunc((char *)"glLinkProgram");
-    glValidateProgram_ptr = (PFNGLVALIDATEPROGRAMPROC)LoadGLFunc((char *)"glValidateProgram");
-    glGetProgramiv_ptr = (PFNGLGETPROGRAMIVPROC)LoadGLFunc((char *)"glGetProgramiv");
-    glGetProgramInfoLog_ptr = (PFNGLGETPROGRAMINFOLOGPROC)LoadGLFunc((char *)"glGetProgramInfoLog");
-    glGenBuffers_ptr = (PFNGLGENBUFFERSPROC)LoadGLFunc((char *)"glGenBuffers");
-    glGenVertexArrays_ptr = (PFNGLGENVERTEXARRAYSPROC)LoadGLFunc((char *)"glGenVertexArrays");
-    glGetAttribLocation_ptr = (PFNGLGETATTRIBLOCATIONPROC)LoadGLFunc((char *)"glGetAttribLocation");
-    glBindVertexArray_ptr = (PFNGLBINDVERTEXARRAYPROC)LoadGLFunc((char *)"glBindVertexArray");
-    glEnableVertexAttribArray_ptr = (PFNGLENABLEVERTEXATTRIBARRAYPROC)LoadGLFunc((char *)"glEnableVertexAttribArray");
-    glVertexAttribPointer_ptr = (PFNGLVERTEXATTRIBPOINTERPROC)LoadGLFunc((char *)"glVertexAttribPointer");
-    glBindBuffer_ptr = (PFNGLBINDBUFFERPROC)LoadGLFunc((char *)"glBindBuffer");
-    glBindBufferBase_ptr = (PFNGLBINDBUFFERBASEPROC)LoadGLFunc((char *)"glBindBufferBase");
-    glBufferData_ptr = (PFNGLBUFFERDATAPROC)LoadGLFunc((char *)"glBufferData");
-    glGetVertexAttribPointerv_ptr = (PFNGLGETVERTEXATTRIBPOINTERVPROC)LoadGLFunc((char *)"glGetVertexAttribPointerv");
-    glUseProgram_ptr = (PFNGLUSEPROGRAMPROC)LoadGLFunc((char *)"glUseProgram");
-    glDeleteVertexArrays_ptr = (PFNGLDELETEVERTEXARRAYSPROC)LoadGLFunc((char *)"glDeleteVertexArrays");
-    glDeleteBuffers_ptr = (PFNGLDELETEBUFFERSPROC)LoadGLFunc((char *)"glDeleteBuffers");
-    glDeleteProgram_ptr = (PFNGLDELETEPROGRAMPROC)LoadGLFunc((char *)"glDeleteProgram");
-    glDetachShader_ptr = (PFNGLDETACHSHADERPROC)LoadGLFunc((char *)"glDetachShader");
-    glDeleteShader_ptr = (PFNGLDELETESHADERPROC)LoadGLFunc((char *)"glDeleteShader");
-    glDrawElementsInstanced_ptr = (PFNGLDRAWELEMENTSINSTANCEDPROC)LoadGLFunc((char *)"glDrawElementsInstanced");
-    glGenerateMipmap_ptr = (PFNGLGENERATEMIPMAPPROC)LoadGLFunc((char *)"glGenerateMipmap");
-    glDebugMessageCallback_ptr = (PFNGLDEBUGMESSAGECALLBACKPROC)LoadGLFunc((char *)"glDebugMessageCallback");
+    glCreateProgram_ptr = (PFNGLCREATEPROGRAMPROC)LoadGLFunc((const char*)"glCreateProgram");
+    glDeleteTextures_ptr = (PFNGLDELETETEXTURESPROC)LoadGLFunc((const char*)"glDeleteTextures");
+    glGenTextures_ptr = (PFNGLGENTEXTURESPROC)LoadGLFunc((const char*)"glGenTextures");
+    glBindTexture_ptr = (PFNGLBINDTEXTUREPROC)LoadGLFunc((const char*)"glBindTexture");
+    glDrawArrays_ptr = (PFNGLDRAWARRAYSPROC)LoadGLFunc((const char*)"glDrawArrays");
+    glCreateShader_ptr = (PFNGLCREATESHADERPROC)LoadGLFunc((const char*)"glCreateShader");
+    glGetUniformLocation_ptr = (PFNGLGETUNIFORMLOCATIONPROC)LoadGLFunc((const char*)"glGetUniformLocation");
+    glUniform1f_ptr = (PFNGLUNIFORM1FPROC)LoadGLFunc((const char*)"glUniform1f");
+    glUniform2fv_ptr = (PFNGLUNIFORM2FVPROC)LoadGLFunc((const char*)"glUniform2fv");
+    glUniform3fv_ptr = (PFNGLUNIFORM3FVPROC)LoadGLFunc((const char*)"glUniform3fv");
+    glUniform1i_ptr = (PFNGLUNIFORM1IPROC)LoadGLFunc((const char*)"glUniform1i");
+    glUniformMatrix4fv_ptr = (PFNGLUNIFORMMATRIX4FVPROC)LoadGLFunc((const char*)"glUniformMatrix4fv");
+    glVertexAttribDivisor_ptr = (PFNGLVERTEXATTRIBDIVISORPROC)LoadGLFunc((const char*)"glVertexAttribDivisor");
+    glActiveTexture_ptr = (PFNGLACTIVETEXTUREPROC)LoadGLFunc((const char*)"glActiveTexture");
+    glBufferSubData_ptr = (PFNGLBUFFERSUBDATAPROC)LoadGLFunc((const char*)"glBufferSubData");
+    glDrawArraysInstanced_ptr = (PFNGLDRAWARRAYSINSTANCEDPROC)LoadGLFunc((const char*)"glDrawArraysInstanced");
+    glBindFramebuffer_ptr = (PFNGLBINDFRAMEBUFFERPROC)LoadGLFunc((const char*)"glBindFramebuffer");
+    glCheckFramebufferStatus_ptr = (PFNGLCHECKFRAMEBUFFERSTATUSPROC)LoadGLFunc((const char*)"glCheckFramebufferStatus");
+    glGenFramebuffers_ptr = (PFNGLGENFRAMEBUFFERSPROC)LoadGLFunc((const char*)"glGenFramebuffers");
+    glFramebufferTexture2D_ptr = (PFNGLFRAMEBUFFERTEXTURE2DPROC)LoadGLFunc((const char*)"glFramebufferTexture2D");
+    glDrawBuffers_ptr = (PFNGLDRAWBUFFERSPROC)LoadGLFunc((const char*)"glDrawBuffers");
+    glDeleteFramebuffers_ptr = (PFNGLDELETEFRAMEBUFFERSPROC)LoadGLFunc((const char*)"glDeleteFramebuffers");
+    glBlendFunci_ptr = (PFNGLBLENDFUNCIPROC)LoadGLFunc((const char*)"glBlendFunci");
+    glBlendEquation_ptr = (PFNGLBLENDEQUATIONPROC)LoadGLFunc((const char*)"glBlendEquation");
+    glClearBufferfv_ptr = (PFNGLCLEARBUFFERFVPROC)LoadGLFunc((const char*)"glClearBufferfv");
+    glShaderSource_ptr = (PFNGLSHADERSOURCEPROC)LoadGLFunc((const char*)"glShaderSource");
+    glCompileShader_ptr = (PFNGLCOMPILESHADERPROC)LoadGLFunc((const char*)"glCompileShader");
+    glGetShaderiv_ptr = (PFNGLGETSHADERIVPROC)LoadGLFunc((const char*)"glGetShaderiv");
+    glGetShaderInfoLog_ptr = (PFNGLGETSHADERINFOLOGPROC)LoadGLFunc((const char*)"glGetShaderInfoLog");
+    glAttachShader_ptr = (PFNGLATTACHSHADERPROC)LoadGLFunc((const char*)"glAttachShader");
+    glLinkProgram_ptr = (PFNGLLINKPROGRAMPROC)LoadGLFunc((const char*)"glLinkProgram");
+    glValidateProgram_ptr = (PFNGLVALIDATEPROGRAMPROC)LoadGLFunc((const char*)"glValidateProgram");
+    glGetProgramiv_ptr = (PFNGLGETPROGRAMIVPROC)LoadGLFunc((const char*)"glGetProgramiv");
+    glGetProgramInfoLog_ptr = (PFNGLGETPROGRAMINFOLOGPROC)LoadGLFunc((const char*)"glGetProgramInfoLog");
+    glGenBuffers_ptr = (PFNGLGENBUFFERSPROC)LoadGLFunc((const char*)"glGenBuffers");
+    glGenVertexArrays_ptr = (PFNGLGENVERTEXARRAYSPROC)LoadGLFunc((const char*)"glGenVertexArrays");
+    glGetAttribLocation_ptr = (PFNGLGETATTRIBLOCATIONPROC)LoadGLFunc((const char*)"glGetAttribLocation");
+    glBindVertexArray_ptr = (PFNGLBINDVERTEXARRAYPROC)LoadGLFunc((const char*)"glBindVertexArray");
+    glEnableVertexAttribArray_ptr = (PFNGLENABLEVERTEXATTRIBARRAYPROC)LoadGLFunc((const char*)"glEnableVertexAttribArray");
+    glVertexAttribPointer_ptr = (PFNGLVERTEXATTRIBPOINTERPROC)LoadGLFunc((const char*)"glVertexAttribPointer");
+    glBindBuffer_ptr = (PFNGLBINDBUFFERPROC)LoadGLFunc((const char*)"glBindBuffer");
+    glBindBufferBase_ptr = (PFNGLBINDBUFFERBASEPROC)LoadGLFunc((const char*)"glBindBufferBase");
+    glBufferData_ptr = (PFNGLBUFFERDATAPROC)LoadGLFunc((const char*)"glBufferData");
+    glGetVertexAttribPointerv_ptr = (PFNGLGETVERTEXATTRIBPOINTERVPROC)LoadGLFunc((const char*)"glGetVertexAttribPointerv");
+    glUseProgram_ptr = (PFNGLUSEPROGRAMPROC)LoadGLFunc((const char*)"glUseProgram");
+    glDeleteVertexArrays_ptr = (PFNGLDELETEVERTEXARRAYSPROC)LoadGLFunc((const char*)"glDeleteVertexArrays");
+    glDeleteBuffers_ptr = (PFNGLDELETEBUFFERSPROC)LoadGLFunc((const char*)"glDeleteBuffers");
+    glDeleteProgram_ptr = (PFNGLDELETEPROGRAMPROC)LoadGLFunc((const char*)"glDeleteProgram");
+    glDetachShader_ptr = (PFNGLDETACHSHADERPROC)LoadGLFunc((const char*)"glDetachShader");
+    glDeleteShader_ptr = (PFNGLDELETESHADERPROC)LoadGLFunc((const char*)"glDeleteShader");
+    glDrawElementsInstanced_ptr = (PFNGLDRAWELEMENTSINSTANCEDPROC)LoadGLFunc((const char*)"glDrawElementsInstanced");
+    glGenerateMipmap_ptr = (PFNGLGENERATEMIPMAPPROC)LoadGLFunc((const char*)"glGenerateMipmap");
+    glDebugMessageCallback_ptr = (PFNGLDEBUGMESSAGECALLBACKPROC)LoadGLFunc((const char*)"glDebugMessageCallback");
 }
 
 GLAPI GLuint APIENTRY glCreateProgram(void)

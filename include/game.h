@@ -1,9 +1,13 @@
 #pragma once
-#include <utils/mathf.h>
-#include "assets.h"
+#include "utils.h"
 #include "interface.h"
+#include "config.hpp"
 
-// Update Game Logic
-void Update() {
+struct GameState {
 
+};
+
+extern "C"
+{
+    __declspec(dllexport) void Update(RenderData* renderDataIn, Input* inputIn);
 }

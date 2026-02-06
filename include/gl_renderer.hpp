@@ -1,19 +1,20 @@
 #include "gl_renderer.h"
-#include <config.h>
+#include <config.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-#include "utils/color.h"
+#include "utils/mathf.h"
 
 struct GLContext
 {
   GLuint programID;
   GLuint textureID;
   GLuint VAO;
-  //   GLuint transformSBOID;
+  GLuint transformSBOID;
+  RenderData* renderDataPtr;
   //   GLuint materialSBOID;
-  //   GLuint screenSizeID;
+  GLuint screenSizeID;
   //   GLuint orthoProjectionID;
   //   GLuint fontAtlasID;
 
@@ -39,8 +40,9 @@ static void APIENTRY gl_debug_callback(GLenum source, GLenum type, GLuint id, GL
   }
 }
 
-bool glInit(BumpAllocator *transientStorage)
+bool glInit(BumpAllocator *transientStorage, RenderData* renderDataPtr)
 {
+  glContext.renderDataPtr = renderDataPtr;
   glLoadFunc();
 
   glDebugMessageCallback(&gl_debug_callback, nullptr);
@@ -159,16 +161,21 @@ bool glInit(BumpAllocator *transientStorage)
     stbi_image_free(data);
   }
 
-  glEnable(GL_FRAMEBUFFER_SRGB);
-  glDisable(0x809D); // disable multi sample
-
-  glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_GREATER);
-
+  {
+    // Transform Storage Buffer
+    glGenBuffers(1, &glContext.transformSBOID);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, glContext.transformSBOID);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Transform) * MAX_TRANSFORMS,
+                 glContext.renderDataPtr->transforms, GL_DYNAMIC_DRAW);
+  }
   glUseProgram(glContext.programID);
 
-  GLint loc = glGetUniformLocation(glContext.programID, "textureAtlas");
-  glUniform1i(loc, 0); // texture unit 0
+  GLint loc0 = glGetUniformLocation(glContext.programID, "textureAtlas");
+  glUniform1i(loc0, 0); // texture unit 0
+
+  glContext.screenSizeID = glGetUniformLocation(glContext.programID, "screenSize");
+  vec2 screen_size = {(float)input->width, (float)input->height};
+  glUniform2fv(glContext.screenSizeID, 1, &screen_size.x);
 
   glBindVertexArray(0);
 
@@ -177,17 +184,33 @@ bool glInit(BumpAllocator *transientStorage)
 
 void glRender()
 {
+  glEnable(GL_FRAMEBUFFER_SRGB);
+  glDisable(0x809D); // disable multi sample
+
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_GREATER);
+
   float gamma = 1.0f;
   Color bg_color = {0.01f, 0.01f, 0.01f, 1.0f};
   glClearColor(pow(bg_color.r, gamma), pow(bg_color.g, gamma), pow(bg_color.b, gamma), bg_color.a);
   glClearDepth(0.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glViewport(0, 0, screen.width, screen.height);
+  glViewport(0, 0, input->width, input->height);
 
   glUseProgram(glContext.programID);
+  vec2 screen_size = {(float)input->width, (float)input->height};
+  glUniform2fv(glContext.screenSizeID, 1, &screen_size.x);
 
   glBindVertexArray(glContext.VAO);
   glBindTexture(GL_TEXTURE_2D, glContext.textureID);
-  glDrawArrays(GL_TRIANGLES, 0, 6);
+
+  {
+    glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(Transform) * glContext.renderDataPtr->transformCount,
+                    glContext.renderDataPtr->transforms);
+    glDrawArraysInstanced(GL_TRIANGLES, 0, 6, glContext.renderDataPtr->transformCount);
+
+    glContext.renderDataPtr->transformCount = 0;
+  }
+
   glBindVertexArray(0);
 }

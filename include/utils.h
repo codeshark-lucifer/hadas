@@ -7,11 +7,16 @@
 
 #ifdef _WIN32
 #define DEBUG_BREAK() __debugbreak()
+#define EXPORT_FN __declspec(dllexport)
 #elif __linux__
 #define DEBUG_BREAK() __builtin_debugtrap()
+#define EXPORT_FN 
 #elif __APPLE__
 #define DEBUG_BREAK() __builtin_trap()
+#define EXPORT_FN 
 #endif
+
+
 
 #define BIT(x) 1 << (x)
 #define KB(x) ((unsigned long long)1024 * x)
@@ -93,11 +98,14 @@ BumpAllocator MakeAllocator(size_t size);
 char *BumpAlloc(BumpAllocator *bumpAllocator, size_t size);
 
 // File I/O
-long long get_timestemp(char *file);
-bool file_exists(char *filepath);
-long get_file_size(char *filepath);
-char *read_file(char *filepath, int *size, char *buffer);
-void write_file(char *filepath, char *buffer, int size);
-char *read_file(char *filepath, int *size, BumpAllocator *bumpAllocator);
-bool copy_file(char *filename, char *outputName, char *buffer);
-bool copy_file(char *filename, char *outputName, BumpAllocator *bumpAllocator);
+long long get_timestemp(const char* file);
+bool file_exists(const char* filepath);
+long get_file_size(const char* filepath);
+
+char* read_file(const char* filepath, int* size, char* buffer);
+char* read_file(const char* filepath, int* size, BumpAllocator* bumpAllocator);
+
+void write_file(const char* filepath, const char* buffer, int size);
+
+bool copy_file(const char* filename, const char* outputName, char* buffer);
+bool copy_file(const char* filename, const char* outputName, BumpAllocator* bumpAllocator);

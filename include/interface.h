@@ -1,14 +1,7 @@
 #pragma once
-#include "utils/mathf.h"
+#include "render_types.h" // Include the new header for RenderData and Transform structs
+#include "assets.h"
 
-constexpr int MAX_TRANSFORMS = 1000;
+extern RenderData* renderData;
 
-struct Transform
-{
-    ivec2 ioffset;
-    ivec2 isize;
-
-    vec2 pos;
-    vec2 size;
-};
-
+void DrawSprite(SpriteID spriteID, vec2 pos, vec2 size);

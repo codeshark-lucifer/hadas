@@ -2,7 +2,7 @@
 #include <cstdio>
 #include <utils.h>
 #include <GL/glcorearb.h>
-#include <config.h>
+#include <config.hpp>
 
 bool g_running = false;
 HDC hdc = nullptr;
@@ -22,16 +22,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         return 0;
 
     case WM_SIZE:
-    {
-        screen.width = (float)LOWORD(lParam);
-        screen.height = (float)HIWORD(lParam);
-
-        glViewport(0, 0,
-                   (GLsizei)screen.width,
-                   (GLsizei)screen.height);
-
+        if (input)
+        {
+            input->width = (float)LOWORD(lParam);
+            input->height = (float)HIWORD(lParam);
+        }
         return 0;
-    }
 
     default:
         return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -50,14 +46,16 @@ HWND CreatePlatformWindow(const WinInfo &info)
     wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
 
     if (!RegisterClassA(&wc))
+    {
+        LOG_ERROR("RegisterClassA failed: %lu", GetLastError());
         return nullptr;
+    }
 
     DWORD style = WS_OVERLAPPEDWINDOW;
     RECT rect = {0, 0, info.width, info.height};
     AdjustWindowRectEx(&rect, style, FALSE, 0);
     int width = rect.right - rect.left;
     int height = rect.bottom - rect.top;
-
     HWND window = CreateWindowExA(
         0,
         wc.lpszClassName,
@@ -75,7 +73,10 @@ HWND CreatePlatformWindow(const WinInfo &info)
 
     hdc = GetDC(window);
     if (!hdc)
+    {
+        LOG_ERROR("HDC is null");
         return nullptr;
+    }
 
     PIXELFORMATDESCRIPTOR pfd = {};
     pfd.nSize = sizeof(pfd);
@@ -100,6 +101,9 @@ HWND CreatePlatformWindow(const WinInfo &info)
     if (!wglMakeCurrent(hdc, rc))
         return nullptr;
 
+    LOG_ASSERT(rc, "wglCreateContext failed");
+    LOG_ASSERT(wglMakeCurrent(hdc, rc), "wglMakeCurrent failed");
+
     ShowWindow(window, SW_SHOW);
     UpdateWindow(window);
 
@@ -116,7 +120,7 @@ void PollEvent(WinEvent *event)
     }
 }
 
-void *LoadGLFunc(char *funcName)
+void *LoadGLFunc(const char *funcName)
 {
     PROC proc = wglGetProcAddress(funcName);
     if (!proc)
@@ -140,4 +144,26 @@ bool ShouldClose()
 void SwapBuffersWindow()
 {
     SwapBuffers(hdc);
+}
+
+void *LoadDynamicLibrary(const char *dll)
+{
+    HMODULE result = LoadLibraryA(dll);
+    LOG_ASSERT(result, "Failed to load dll: %s", dll);
+
+    return result;
+}
+
+void *LoadDynamicFunc(void *dll, const char *funcName)
+{
+    FARPROC proc = GetProcAddress((HMODULE)dll, funcName);
+    LOG_ASSERT(proc, "Failed to load functions: %s from DLL", funcName);
+    return (void *)proc;
+}
+
+bool FreeDynamicLibrary(void *dll)
+{
+    BOOL free = FreeLibrary((HMODULE)dll);
+    LOG_ASSERT(free, "Failed to FreeLibrary");
+    return (bool)free;
 }
