@@ -5,10 +5,11 @@
 #include <interface.h>
 #include <config.hpp>
 #include <dwmapi.h>
+
 bool g_running = false;
 HDC hdc = nullptr;
 Window window = nullptr;
-Input *input = nullptr;
+
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)

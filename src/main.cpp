@@ -1,5 +1,7 @@
 #include <utils.h>
 #include <config.hpp>
+
+Input* input = nullptr;
 #include <platform.h>
 #include <gl_renderer.hpp>
 #include <game.h>
@@ -20,12 +22,12 @@ int main()
     input = (Input *)BumpAlloc(&persistentStorage, sizeof(Input));
     LOG_ASSERT(input, "Failed to allocate Input");
     memset(input, 0, sizeof(Input));
-    input->size.x = 956;
-    input->size.y = 540;
+    input->size.x = WINDOW_WIDTH;
+    input->size.y = WINDOW_HEIGHT;
 
     WinInfo info = {};
     info.input = input;
-    info.title = "Hades";
+    info.title = WINDOW_TITLE;
 
     RenderData *exeRenderData = (RenderData *)BumpAlloc(&persistentStorage, sizeof(RenderData));
     LOG_ASSERT(exeRenderData, "Failed to allocate RenderData");

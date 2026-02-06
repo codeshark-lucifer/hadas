@@ -4,6 +4,9 @@
 #include "utils.h"
 
 Input *input = nullptr;
+GameState *gameState = nullptr;
+
+
 // Update Game Logic
 EXPORT_FN void Update(RenderData *renderDataIn, Input *inputIn)
 {
@@ -23,4 +26,5 @@ EXPORT_FN void Update(RenderData *renderDataIn, Input *inputIn)
         SPRITE_LOGO,
         {0.0f, 0.0f},
         {100.0f, 100.0f});
+
 }

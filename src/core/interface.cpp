@@ -2,6 +2,27 @@
 #include "utils.h"
 
 RenderData *renderData = nullptr;
+
+vec2 ScreenToWorld(Input *inputIn)
+{
+    ivec2 screenPos = inputIn->mousePos;
+    Camera2D camera = renderData->gameCamera;
+
+    float xPos = (float)screenPos.x /
+                 inputIn->size.x /
+                 camera.dimention.x;
+
+    xPos += -camera.dimention.x / 2.0f + camera.position.x;
+
+    float yPos = (float)screenPos.y /
+                 inputIn->size.y /
+                 camera.dimention.y;
+
+    yPos += camera.dimention.y / 2.0f - camera.position.y;
+
+    return {xPos, yPos};
+}
+
 void DrawSprite(SpriteID spriteID, vec2 pos, vec2 size)
 {
     // LOG_DEBUG("interface.cpp: DrawSprite - renderData = %p", renderData);
@@ -20,23 +41,7 @@ void DrawSprite(SpriteID spriteID, vec2 pos, vec2 size)
     renderData->transforms[renderData->transformCount++] = transform;
 }
 
-vec2 ScreenToWorld(Input *inputIn)
+void DrawQuad(vec2 pos, vec2 size)
 {
-    ivec2 screenPos = inputIn->mousePos;
-    Camera2D camera = renderData->gameCamera;
-    
-    float xPos = (float)screenPos.x /
-    inputIn->size.x /
-    camera.dimention.x;
-    
-    xPos += -camera.dimention.x / 2.0f + camera.position.x;
-    
-    float yPos = (float)screenPos.y /
-    inputIn->size.y /
-    camera.dimention.y;
-    
-    yPos += camera.dimention.y / 2.0f - camera.position.y;
-    
-    return {xPos, yPos};
+    DrawSprite(SPRITE_LOGO, pos, size);
 }
-
