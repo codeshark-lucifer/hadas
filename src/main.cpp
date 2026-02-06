@@ -1,7 +1,8 @@
 #include <utils.h>
+#include <config.hpp>
+
 #include <platform.h>
 #include <gl_renderer.hpp>
-#include <config.hpp>
 #include <game.h>
 #include <render_types.h> // Include render_types.h to get RenderData struct definition
 
@@ -18,12 +19,12 @@ int main()
     input = (Input *)BumpAlloc(&persistentStorage, sizeof(Input));
     LOG_ASSERT(input, "Failed to allocate Input");
     memset(input, 0, sizeof(Input));
-    input->width = 956;
-    input->height = 540;
+    input->size.x = 956;
+    input->size.y = 540;
 
     WinInfo info = {};
-    info.width = input->width;
-    info.height = input->height;
+    info.width = input->size.x;
+    info.height = input->size.y;
     info.title = "Hades";
 
     RenderData* exeRenderData = (RenderData *)BumpAlloc(&persistentStorage, sizeof(RenderData));

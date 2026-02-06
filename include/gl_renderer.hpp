@@ -12,10 +12,10 @@ struct GLContext
   GLuint textureID;
   GLuint VAO;
   GLuint transformSBOID;
-  RenderData* renderDataPtr;
+  RenderData *renderDataPtr;
   //   GLuint materialSBOID;
   GLuint screenSizeID;
-  //   GLuint orthoProjectionID;
+  GLuint orthoProjectionID;
   //   GLuint fontAtlasID;
 
   //   long long textureTimestamp;
@@ -40,7 +40,7 @@ static void APIENTRY gl_debug_callback(GLenum source, GLenum type, GLuint id, GL
   }
 }
 
-bool glInit(BumpAllocator *transientStorage, RenderData* renderDataPtr)
+bool glInit(BumpAllocator *transientStorage, RenderData *renderDataPtr)
 {
   glContext.renderDataPtr = renderDataPtr;
   glLoadFunc();
@@ -173,8 +173,9 @@ bool glInit(BumpAllocator *transientStorage, RenderData* renderDataPtr)
   GLint loc0 = glGetUniformLocation(glContext.programID, "textureAtlas");
   glUniform1i(loc0, 0); // texture unit 0
 
+  glContext.orthoProjectionID = glGetUniformLocation(glContext.programID, "projection");
   glContext.screenSizeID = glGetUniformLocation(glContext.programID, "screenSize");
-  vec2 screen_size = {(float)input->width, (float)input->height};
+  vec2 screen_size = {(float)input->size.x, (float)input->size.y};
   glUniform2fv(glContext.screenSizeID, 1, &screen_size.x);
 
   glBindVertexArray(0);
@@ -189,16 +190,19 @@ void glRender()
 
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_GREATER);
+  glClearDepth(0.0f);
 
   float gamma = 1.0f;
   Color bg_color = {0.01f, 0.01f, 0.01f, 1.0f};
   glClearColor(pow(bg_color.r, gamma), pow(bg_color.g, gamma), pow(bg_color.b, gamma), bg_color.a);
   glClearDepth(0.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glViewport(0, 0, input->width, input->height);
+  glViewport(0, 0, input->size.x, input->size.y);
 
   glUseProgram(glContext.programID);
-  vec2 screen_size = {(float)input->width, (float)input->height};
+  glUniformMatrix4fv(glContext.orthoProjectionID, 1, GL_FALSE, glContext.renderDataPtr->gameCamera.matrix().m);
+
+  vec2 screen_size = {(float)input->size.x, (float)input->size.y};
   glUniform2fv(glContext.screenSizeID, 1, &screen_size.x);
 
   glBindVertexArray(glContext.VAO);

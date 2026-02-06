@@ -17,6 +17,7 @@ layout (std430, binding = 0) buffer TransformSBO
 layout (location = 0) out vec2 textureCoordsOut;
 
 uniform vec2 screenSize;
+uniform mat4 projection;
 
 void main() {
     Transform transform = transforms[gl_InstanceID];
@@ -45,11 +46,10 @@ void main() {
     };
 
     {
-        vec2 vertexPos = vertices[gl_VertexID];
-        vertexPos.y = -vertexPos.y + screenSize.y;
-        vertexPos = 2.0 * (vertexPos / screenSize) - 1.0;
-        
-        gl_Position = vec4(vertexPos, 0.0, 1.0);
+        vec2 centeredPos = transform.pos - transform.size * 0.5;
+        vec2 vertexPos = vertices[gl_VertexID] - transform.pos + centeredPos;
+
+        gl_Position = projection * vec4(vertexPos, 0.0, 1.0);
     }
     textureCoordsOut = textureCoords[gl_VertexID];
 }

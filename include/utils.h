@@ -16,7 +16,7 @@
 #define EXPORT_FN 
 #endif
 
-
+#define b8 char
 
 #define BIT(x) 1 << (x)
 #define KB(x) ((unsigned long long)1024 * x)

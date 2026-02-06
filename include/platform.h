@@ -39,3 +39,7 @@ void SwapBuffersWindow();
 bool FreeDynamicLibrary(void *dll);
 void *LoadDynamicLibrary(const char *dll);
 void *LoadDynamicFunc(void *dll, const char *funcName);
+
+// bool IsKeyPressed(KeyCodeID key);
+// bool IsKeyReleased(KeyCodeID key);
+// bool IsKeyDown(KeyCodeID key);
