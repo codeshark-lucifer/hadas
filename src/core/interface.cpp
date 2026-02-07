@@ -28,8 +28,9 @@ void DrawSprite(SpriteID spriteID, vec2 pos, vec2 size)
     transform.ioffset = sprite.offset;
     transform.isize = sprite.size;
 
-    renderData->transforms[renderData->transformCount++] = transform;
+    renderData->transforms.push(transform); // use push
 }
+
 
 void DrawSprite(SpriteID spriteID, vec2 pos)
 {
@@ -44,5 +45,5 @@ void DrawQuad(vec2 pos, vec2 size)
     transform.ioffset = {0, 0};
     transform.isize = {1, 1};
 
-    renderData->transforms[renderData->transformCount++] = transform;
+    renderData->transforms.push(transform); 
 }

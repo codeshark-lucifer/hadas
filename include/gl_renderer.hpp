@@ -52,76 +52,61 @@ bool glInit(BumpAllocator *transientStorage, RenderData *renderDataPtr)
 
     renderData->uiCamera.zoom = 1.0f;
     renderData->uiCamera.dimentions = {(float)input->size.x, (float)input->size.y};
-  };
+  }
+
   glLoadFunc();
 
+  glEnable(GL_DEBUG_OUTPUT);
+  glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
   glDebugMessageCallback(&gl_debug_callback, nullptr);
 
-  glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-  glEnable(GL_DEBUG_OUTPUT);
-
+  // --- Compile Shaders ---
   GLuint vertShaderID = glCreateShader(GL_VERTEX_SHADER);
   GLuint fragShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
   int fileSize = 0;
-  char *vertShader = read_file(const_cast<char *>("assets/shaders/quad.vert"), &fileSize, transientStorage);
-  char *fragShader = read_file(const_cast<char *>("assets/shaders/quad.frag"), &fileSize, transientStorage);
+  char *vertShader = read_file("assets/shaders/quad.vert", &fileSize, transientStorage);
+  char *fragShader = read_file("assets/shaders/quad.frag", &fileSize, transientStorage);
+  LOG_ASSERT(vertShader && fragShader, "Failed to load shaders");
 
-  if (!vertShader || !fragShader)
-  {
-    LOG_ASSERT(false, "Failed to load shaders");
-    return false;
-  }
-
-  glShaderSource(vertShaderID, 1, &vertShader, 0);
-  glShaderSource(fragShaderID, 1, &fragShader, 0);
+  glShaderSource(vertShaderID, 1, &vertShader, nullptr);
+  glShaderSource(fragShaderID, 1, &fragShader, nullptr);
 
   glCompileShader(vertShaderID);
   glCompileShader(fragShaderID);
 
+  auto checkShader = [](GLuint shader, const char *name)
   {
     int success;
     char log[2048] = {};
-
-    glGetShaderiv(vertShaderID, GL_COMPILE_STATUS, &success);
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success)
     {
-      glGetShaderInfoLog(vertShaderID, 2048, 0, log);
-      LOG_ERROR("Failed to compile Vertex Shaders %s", log);
-      return false;
+      glGetShaderInfoLog(shader, 2048, nullptr, log);
+      LOG_ERROR("Failed to compile %s: %s", name, log);
     }
-  }
+    LOG_ASSERT(success, "Shader compilation failed");
+  };
 
-  {
-    int success;
-    char log[2048] = {};
+  checkShader(vertShaderID, "Vertex Shader");
+  checkShader(fragShaderID, "Fragment Shader");
 
-    glGetShaderiv(fragShaderID, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-      glGetShaderInfoLog(fragShaderID, 2048, 0, log);
-      LOG_ERROR("Failed to compile Fragment Shaders %s", log);
-      return false;
-    }
-  }
-
+  // --- Link Program ---
   glContext.programID = glCreateProgram();
-
   glAttachShader(glContext.programID, vertShaderID);
   glAttachShader(glContext.programID, fragShaderID);
   glLinkProgram(glContext.programID);
 
-  { // Program link check
+  {
     int success;
     char log[2048] = {};
-
     glGetProgramiv(glContext.programID, GL_LINK_STATUS, &success);
     if (!success)
     {
-      glGetProgramInfoLog(glContext.programID, 2048, 0, log);
+      glGetProgramInfoLog(glContext.programID, 2048, nullptr, log);
       LOG_ERROR("Failed to link program: %s", log);
-      return false;
     }
+    LOG_ASSERT(success, "Program linking failed");
   }
 
   glDetachShader(glContext.programID, vertShaderID);
@@ -129,62 +114,60 @@ bool glInit(BumpAllocator *transientStorage, RenderData *renderDataPtr)
   glDeleteShader(vertShaderID);
   glDeleteShader(fragShaderID);
 
-  glValidateProgram(glContext.programID); // Add this call
-  {                                       // Program validation check
+  glValidateProgram(glContext.programID);
+
+  {
     int success;
     char log[2048] = {};
-
     glGetProgramiv(glContext.programID, GL_VALIDATE_STATUS, &success);
     if (!success)
     {
-      glGetProgramInfoLog(glContext.programID, 2048, 0, log);
+      glGetProgramInfoLog(glContext.programID, 2048, nullptr, log);
       LOG_ERROR("Failed to validate program: %s", log);
-      return false;
     }
+    LOG_ASSERT(success, "Program validation failed");
   }
 
+  // --- VAO ---
   glGenVertexArrays(1, &glContext.VAO);
   glBindVertexArray(glContext.VAO);
 
-  {
-    int w, h, ch;
-    char *data = (char *)stbi_load("assets/textures/sample.png", &w, &h, &ch, 4);
-    if (!data)
-    {
-      LOG_ASSERT(false, "Failed Load Textures");
-      return false;
-    }
+  // --- Texture ---
+  int w, h, ch;
+  char *data = (char *)stbi_load("assets/textures/sample.png", &w, &h, &ch, 4);
+  LOG_ASSERT(data, "Failed to load texture");
 
-    glGenTextures(1, &glContext.textureID);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, glContext.textureID);
+  glGenTextures(1, &glContext.textureID);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, glContext.textureID);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8,
+               w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8,
-                 w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+  stbi_image_free(data);
 
-    stbi_image_free(data);
-  }
+  // --- Transform SSBO ---
+  glGenBuffers(1, &glContext.transformSBOID);
+  glBindBuffer(GL_SHADER_STORAGE_BUFFER, glContext.transformSBOID);
 
-  {
-    // Transform Storage Buffer
-    glGenBuffers(1, &glContext.transformSBOID);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, glContext.transformSBOID);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Transform) * MAX_TRANSFORMS,
-                 renderData->transforms, GL_DYNAMIC_DRAW);
-  }
+  GLsizeiptr initialCapacity = sizeof(Transform) * 1024; // reserve enough for dynamic transforms
+  glBufferData(GL_SHADER_STORAGE_BUFFER, initialCapacity, nullptr, GL_DYNAMIC_DRAW);
+
+  glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, glContext.transformSBOID);
+
   glUseProgram(glContext.programID);
 
   GLint loc0 = glGetUniformLocation(glContext.programID, "textureAtlas");
-  glUniform1i(loc0, 0); // texture unit 0
+  glUniform1i(loc0, 0);
 
   glContext.orthoProjectionID = glGetUniformLocation(glContext.programID, "projection");
   glContext.screenSizeID = glGetUniformLocation(glContext.programID, "screenSize");
+
   vec2 screen_size = {(float)input->size.x, (float)input->size.y};
   glUniform2fv(glContext.screenSizeID, 1, &screen_size.x);
 
@@ -195,36 +178,47 @@ bool glInit(BumpAllocator *transientStorage, RenderData *renderDataPtr)
 
 void glRender()
 {
-  glEnable(GL_FRAMEBUFFER_SRGB);
-  glDisable(0x809D); // disable multi sample
+    glEnable(GL_FRAMEBUFFER_SRGB);
+    glDisable(0x809D); // disable multi sample
 
-  glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_GREATER);
-  glClearDepth(0.0f);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_GREATER);
+    glClearDepth(0.0f);
 
-  float gamma = 1.0f;
-  Color bg_color = {0.01f, 0.01f, 0.01f, 1.0f};
-  glClearColor(pow(bg_color.r, gamma), pow(bg_color.g, gamma), pow(bg_color.b, gamma), bg_color.a);
-  glClearDepth(0.0f);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glViewport(0, 0, input->size.x, input->size.y);
+    // Clear screen
+    float gamma = 1.0f;
+    Color bg_color = {0.01f, 0.01f, 0.01f, 1.0f};
+    glClearColor(pow(bg_color.r, gamma), pow(bg_color.g, gamma), pow(bg_color.b, gamma), bg_color.a);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glViewport(0, 0, input->size.x, input->size.y);
 
-  glUseProgram(glContext.programID);
-  glUniformMatrix4fv(glContext.orthoProjectionID, 1, GL_FALSE, renderData->gameCamera.matrix().m);
+    glUseProgram(glContext.programID);
 
-  vec2 screen_size = {(float)input->size.x, (float)input->size.y};
-  glUniform2fv(glContext.screenSizeID, 1, &screen_size.x);
+    // Upload camera matrix
+    glUniformMatrix4fv(glContext.orthoProjectionID, 1, GL_FALSE, renderData->gameCamera.matrix().m);
 
-  glBindVertexArray(glContext.VAO);
-  glBindTexture(GL_TEXTURE_2D, glContext.textureID);
+    // Upload screen size
+    vec2 screen_size = {(float)input->size.x, (float)input->size.y};
+    glUniform2fv(glContext.screenSizeID, 1, &screen_size.x);
 
-  {
-    glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(Transform) * renderData->transformCount,
-                    renderData->transforms);
-    glDrawArraysInstanced(GL_TRIANGLES, 0, 6, renderData->transformCount);
+    glBindVertexArray(glContext.VAO);
+    glBindTexture(GL_TEXTURE_2D, glContext.textureID);
 
-    renderData->transformCount = 0;
-  }
+    size_t transformCount = renderData->transforms.size();
+    if (transformCount > 0)
+    {
+        // Upload transforms to GPU
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, glContext.transformSBOID);
+        glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0,
+                        sizeof(Transform) * transformCount,
+                        renderData->transforms.data());
 
-  glBindVertexArray(0);
+        // Draw instanced quads
+        glDrawArraysInstanced(GL_TRIANGLES, 0, 6, transformCount);
+
+        // Clear for next frame
+        renderData->transforms.clear();
+    }
+
+    glBindVertexArray(0);
 }

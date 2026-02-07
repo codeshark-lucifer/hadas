@@ -46,8 +46,6 @@ int main()
     while (!ShouldClose())
     {
         ReloadGameDll(&transientStorage);
-        exeRenderData->transformCount = 0;
-
         WinEvent event;
         PollEvent(&event, input);
 

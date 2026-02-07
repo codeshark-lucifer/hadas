@@ -52,6 +52,7 @@ EXPORT_FN void Update(GameState *gameState, RenderData *renderDataIn, Input *inp
         if (tile)
             tile->isVisible = true;
     }
+    
     if (IsKeyDown(KEY_MOUSE_RIGHT))
     {
         ivec2 worldPos = input->mousePosWorld;
