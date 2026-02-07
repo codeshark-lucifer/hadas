@@ -6,7 +6,6 @@
 Input *input = nullptr;
 GameState *gameState = nullptr;
 
-
 // Update Game Logic
 EXPORT_FN void Update(RenderData *renderDataIn, Input *inputIn)
 {
