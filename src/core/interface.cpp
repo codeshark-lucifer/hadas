@@ -5,32 +5,22 @@ RenderData *renderData = nullptr;
 
 vec2 ScreenToWorld(Input *inputIn)
 {
-    ivec2 screenPos = inputIn->mousePos;
+    ivec2 screenPos = inputIn->mousePos; // pivot (0,0) is top-left
     Camera2D camera = renderData->gameCamera;
 
-    float xPos = (float)screenPos.x /
-                 inputIn->size.x /
-                 camera.dimention.x;
+    // Convert screen pos [0, screenSize] to [-0.5, 0.5]
+    float normalizedX = ((float)screenPos.x / inputIn->size.x) - 0.5f;
+    float normalizedY = 0.5f - ((float)screenPos.y / inputIn->size.y); // invert Y
 
-    xPos += -camera.dimention.x / 2.0f + camera.position.x;
-
-    float yPos = (float)screenPos.y /
-                 inputIn->size.y /
-                 camera.dimention.y;
-
-    yPos += camera.dimention.y / 2.0f - camera.position.y;
+    // Scale by camera dimensions
+    float xPos = normalizedX * camera.dimentions.x + camera.position.x;
+    float yPos = normalizedY * camera.dimentions.y + camera.position.y;
 
     return {xPos, yPos};
 }
 
 void DrawSprite(SpriteID spriteID, vec2 pos, vec2 size)
 {
-    // LOG_DEBUG("interface.cpp: DrawSprite - renderData = %p", renderData);
-    LOG_ASSERT(renderData != nullptr, "renderData not initialized!");
-    LOG_ASSERT(renderData->transformCount < MAX_TRANSFORMS, "Too many transforms!");
-    if (renderData->transformCount >= MAX_TRANSFORMS)
-        return;
-
     Sprite sprite = getSprite(spriteID);
     Transform transform = {};
     transform.pos = pos;
@@ -41,7 +31,18 @@ void DrawSprite(SpriteID spriteID, vec2 pos, vec2 size)
     renderData->transforms[renderData->transformCount++] = transform;
 }
 
+void DrawSprite(SpriteID spriteID, vec2 pos)
+{
+    DrawSprite(spriteID, pos);
+}
+
 void DrawQuad(vec2 pos, vec2 size)
 {
-    DrawSprite(SPRITE_LOGO, pos, size);
+    Transform transform = {};
+    transform.pos = pos;
+    transform.size = size;
+    transform.ioffset = {0, 0};
+    transform.isize = {1, 1};
+
+    renderData->transforms[renderData->transformCount++] = transform;
 }

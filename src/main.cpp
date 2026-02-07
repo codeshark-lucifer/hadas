@@ -51,7 +51,7 @@ int main()
         WinEvent event;
         PollEvent(&event, input);
 
-        update_game_ptr(exeRenderData, input);
+        update_game_ptr(gameState, exeRenderData, input);
 
         glRender();
         SwapBuffersWindow();

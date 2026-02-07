@@ -37,12 +37,12 @@ void main() {
     float bottom = transform.ioffset.y + transform.isize.y;
 
     vec2 textureCoords[6] = {
-        vec2(left,  top),
-        vec2(left,  bottom),
-        vec2(right, top),
-        vec2(right, top),
-        vec2(left,  bottom),
-        vec2(right, bottom)
+        vec2(left, bottom),
+        vec2(left, top),
+        vec2(right, bottom),
+        vec2(right, bottom),
+        vec2(left, top),
+        vec2(right, top)
     };
 
     {

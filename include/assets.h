@@ -3,7 +3,8 @@
 
 enum SpriteID
 {
-    SPRITE_LOGO,
+    SPRITE_WHITE,
+    SPRITE_DICE,
     SPRITE_COUNT
 };
 

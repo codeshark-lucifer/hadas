@@ -33,8 +33,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         }
         if (renderData)
         {
-            renderData->gameCamera.dimention = {w, h};
-            renderData->uiCamera.dimention = {w, h};
+            renderData->gameCamera.dimentions = {w, h};
+            renderData->uiCamera.dimentions = {w, h};
         };
         return 0;
     }
@@ -97,6 +97,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 HWND CreatePlatformWindow(const WinInfo &info)
 {
+    
     HINSTANCE instance = GetModuleHandleA(nullptr);
     WNDCLASSA wc = {};
     wc.hInstance = instance;
@@ -169,8 +170,7 @@ void PollEvent(WinEvent *event, Input *inputIn)
     inputIn->mousePos.x = point.x;
     inputIn->mousePos.y = point.y;
     inputIn->relMouse = inputIn->mousePos - inputIn->prevMousePos;
-    vec2 pos = ScreenToWorld(inputIn);
-    inputIn->mousePosWorld = ivec2((int)pos.x, (int)pos.y);
+    inputIn->mousePosWorld = ivec2(ScreenToWorld(inputIn));
 }
 void SetTitleBarColor(HWND hwnd, COLORREF color)
 {

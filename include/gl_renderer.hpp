@@ -42,7 +42,17 @@ static void APIENTRY gl_debug_callback(GLenum source, GLenum type, GLuint id, GL
 
 bool glInit(BumpAllocator *transientStorage, RenderData *renderDataPtr)
 {
+  LOG_ASSERT(input, "Failed input is nullptr");
   renderData = renderDataPtr;
+
+  if (renderData)
+  {
+    renderData->gameCamera.zoom = 1.0f;
+    renderData->gameCamera.dimentions = {(float)input->size.x, (float)input->size.y};
+
+    renderData->uiCamera.zoom = 1.0f;
+    renderData->uiCamera.dimentions = {(float)input->size.x, (float)input->size.y};
+  };
   glLoadFunc();
 
   glDebugMessageCallback(&gl_debug_callback, nullptr);

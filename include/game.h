@@ -7,23 +7,34 @@ constexpr const char *WINDOW_TITLE = "hades - engine";
 constexpr int WINDOW_WIDTH = 956;
 constexpr int WINDOW_HEIGHT = 540;
 
-constexpr int TILESIZE = 8;
-constexpr int WORLD_GRID_SIZE = 956;
+constexpr ivec2 WORLD_GRID = {32, 18}; // 32x18 tiles
+constexpr int TILESIZE = 32;           // each tile = 32x32 pixels on screen
 
 struct Tile
 {
-    int neigborMask;
-    bool isVisable;
+    int neigborMask{0};
+    bool isVisible{false};
 };
 
 struct GameState
 {
-    Tile worldGrid[WORLD_GRID_SIZE][WORLD_GRID_SIZE];
+    bool initalized = false;
+    Tile worldGrid[WORLD_GRID.x][WORLD_GRID.y];
+    GameState()
+    {
+        for (int y = 0; y < WORLD_GRID.y; y++)
+        {
+            for (int x = 0; x < WORLD_GRID.x; x++)
+            {
+                worldGrid[x][y] = Tile{};
+            }
+        }
+    }
 };
 
 extern GameState *gameState;
 
 extern "C"
 {
-    __declspec(dllexport) void Update(RenderData *renderDataIn, Input *inputIn);
+    __declspec(dllexport) void Update(GameState *gameState, RenderData *renderDataIn, Input *inputIn);
 }
