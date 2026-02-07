@@ -9,11 +9,13 @@ Sprite getSprite(SpriteID spriteID)
     {
         sprite.offset = {0, 0};
         sprite.size = {1, 1};
+        break;
     }
     case SPRITE_DICE:
     {
         sprite.offset = {16, 0};
         sprite.size = {16, 16};
+        break;
     }
     }
     return sprite;

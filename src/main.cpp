@@ -51,7 +51,7 @@ int main()
 
         update_game_ptr(gameState, exeRenderData, input);
 
-        glRender();
+        glRender(&transientStorage);
         SwapBuffersWindow();
 
         transientStorage.used = 0;
@@ -67,7 +67,7 @@ void ReloadGameDll(BumpAllocator *transientStroage)
 
     const char *dlllocation = "build/bin/app.dll";
 
-    long long currentTimestampGameDLL = get_timestemp(dlllocation);
+    long long currentTimestampGameDLL = get_timestamp(dlllocation);
     if (currentTimestampGameDLL > lastEditTimestampGameDLL)
     {
         if (gameDLL)

@@ -47,3 +47,8 @@ void DrawQuad(vec2 pos, vec2 size)
 
     renderData->transforms.push(transform); 
 }
+
+void DrawQuad(Transform transform)
+{
+    renderData->transforms.push(transform); 
+}

@@ -98,7 +98,7 @@ BumpAllocator MakeAllocator(size_t size);
 char *BumpAlloc(BumpAllocator *bumpAllocator, size_t size);
 
 // File I/O
-long long get_timestemp(const char* file);
+long long get_timestamp(const char* file);
 bool file_exists(const char* filepath);
 long get_file_size(const char* filepath);
 

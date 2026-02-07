@@ -26,6 +26,22 @@ Tile *getTile(ivec2 worldPos)
     return getTile(x, y);
 }
 
+void InitGame(GameState *gameState)
+{
+    {
+        ivec2 tilesPos = {48, 0};
+        for (int y = 0; y < 5; y++)
+        {
+            for (int x = 0; x < 4; x++)
+            {
+                gameState->tileCoords.push({tilesPos.x + x * 8, tilesPos.y + y * 8});
+            }
+        }
+
+        gameState->tileCoords.push({tilesPos.x, tilesPos.y + 5 * 8});
+    }
+}
+
 // Update Game Logic
 EXPORT_FN void Update(GameState *gameState, RenderData *renderDataIn, Input *inputIn)
 {
@@ -35,7 +51,7 @@ EXPORT_FN void Update(GameState *gameState, RenderData *renderDataIn, Input *inp
         {
             renderData = renderDataIn;
             input = inputIn;
-
+            InitGame(gameState);
             ::gameState = gameState; // assign to global
             gameState->initalized = true;
         }
@@ -52,7 +68,7 @@ EXPORT_FN void Update(GameState *gameState, RenderData *renderDataIn, Input *inp
         if (tile)
             tile->isVisible = true;
     }
-    
+
     if (IsKeyDown(KEY_MOUSE_RIGHT))
     {
         ivec2 worldPos = input->mousePosWorld;
@@ -62,6 +78,11 @@ EXPORT_FN void Update(GameState *gameState, RenderData *renderDataIn, Input *inp
     }
 
     {
+        int neigbourOffsets[24] = {
+            0, 1, -1, 0, 1, 0, 0, -1,   // 8-direction neighbors
+            -1, 1, 1, 1, -1, -1, 1, -1, // extended neighbors
+            0, 2, -2, 0, 2, 0, 0, -2};
+
         for (int y = 0; y < WORLD_GRID.y; y++)
         {
             for (int x = 0; x < WORLD_GRID.x; x++)
@@ -70,11 +91,56 @@ EXPORT_FN void Update(GameState *gameState, RenderData *renderDataIn, Input *inp
                 if (!tile || !tile->isVisible)
                     continue;
 
-                vec2 pos = {
+                tile->neigbourMask = 0;
+                int neighborCount = 0;
+                int extendedNeighborCount = 0;
+                int emptyNeighbourSlot = 0;
+
+                for (int n = 0; n < 12; n++)
+                {
+                    Tile *neighbor = getTile(x + neigbourOffsets[n * 2],
+                                             y + neigbourOffsets[n * 2 + 1]);
+
+                    if (!neighbor || neighbor->isVisible)
+                    {
+                        tile->neigbourMask |= BIT(n);
+                        if (n < 8)
+                        {
+                            neighborCount++;
+                        }
+                        else
+                        {
+                            extendedNeighborCount++;
+                        }
+                    }
+                    else if (n < 8)
+                    {
+                        emptyNeighbourSlot = n;
+                    }
+                }
+
+                if (neighborCount == 7 && emptyNeighbourSlot >= 4)
+                {
+                    tile->neigbourMask = 16 + (emptyNeighbourSlot - 4);
+                }
+                else if (neighborCount == 8 && extendedNeighborCount == 4)
+                {
+                    tile->neigbourMask = 20;
+                }
+                else
+                {
+                    tile->neigbourMask = tile->neigbourMask & 0b1111;
+                }
+
+                Transform transform = {};
+                transform.pos = {
                     (float)x * TILESIZE + TILESIZE * 0.5f - (WORLD_GRID.x * TILESIZE) / 2.0f,
                     (float)y * TILESIZE + TILESIZE * 0.5f - (WORLD_GRID.y * TILESIZE) / 2.0f};
 
-                DrawSprite(SPRITE_DICE, pos, vec2((float)TILESIZE));
+                transform.size = {TILESIZE, TILESIZE};
+                transform.isize = {8, 8};
+                transform.ioffset = gameState->tileCoords[tile->neigbourMask];
+                DrawQuad(transform);
             }
         }
     }

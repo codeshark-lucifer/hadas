@@ -12,13 +12,14 @@ constexpr int TILESIZE = 32;           // each tile = 32x32 pixels on screen
 
 struct Tile
 {
-    int neigborMask{0};
+    int neigbourMask{0};
     bool isVisible{false};
 };
 
 struct GameState
 {
     bool initalized = false;
+    Array<ivec2> tileCoords;
     Tile worldGrid[WORLD_GRID.x][WORLD_GRID.y];
     GameState()
     {

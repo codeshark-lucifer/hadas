@@ -31,7 +31,7 @@ char* BumpAlloc(BumpAllocator* bumpAllocator, size_t size)
 // ==========================
 // File I/O
 // ==========================
-long long get_timestemp(const char* file)
+long long get_timestamp(const char* file)
 {
     LOG_ASSERT(file, "get_timestemp: file is null");
 

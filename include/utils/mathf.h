@@ -15,3 +15,8 @@ namespace mathf
         return degrees * (PI / 180.0f);
     }
 }
+
+inline long long max(long long a, long long b)
+{
+    return a > b ? a : b;
+}
