@@ -1,20 +1,20 @@
 #pragma once
 #include <cmath>
 
-struct vec2
+struct Vec2
 {
     float x, y;
 
-    vec2() : x(0), y(0) {}
-    vec2(float v) : x(v), y(v) {}
-    vec2(float x, float y) : x(x), y(y) {}
+    Vec2() : x(0), y(0) {}
+    Vec2(float v) : x(v), y(v) {}
+    Vec2(float x, float y) : x(x), y(y) {}
 
-    vec2 operator+(const vec2 &v) const { return {x + v.x, y + v.y}; }
-    vec2 operator-(const vec2 &v) const { return {x - v.x, y - v.y}; }
-    vec2 operator*(float s) const { return {x * s, y * s}; }
-    vec2 operator/(float s) const { return {x / s, y / s}; }
+    Vec2 operator+(const Vec2 &v) const { return {x + v.x, y + v.y}; }
+    Vec2 operator-(const Vec2 &v) const { return {x - v.x, y - v.y}; }
+    Vec2 operator*(float s) const { return {x * s, y * s}; }
+    Vec2 operator/(float s) const { return {x / s, y / s}; }
 
-    vec2 &operator+=(const vec2 &v)
+    Vec2 &operator+=(const Vec2 &v)
     {
         x += v.x;
         y += v.y;
@@ -26,38 +26,38 @@ struct vec2
         return std::sqrt(x * x + y * y);
     }
 
-    vec2 Normalized() const
+    Vec2 Normalized() const
     {
         float len = Length();
         if (len == 0.0f)
-            return vec2(0);
+            return Vec2(0);
         return *this / len;
     }
 
-    static float Dot(const vec2 &a, const vec2 &b)
+    static float Dot(const Vec2 &a, const Vec2 &b)
     {
         return a.x * b.x + a.y * b.y;
     }
 };
 
-struct vec3
+struct Vec3
 {
     float x, y, z;
 
-    vec3() : x(0), y(0), z(0) {}
-    vec3(float v) : x(v), y(v), z(v) {}
-    vec3(float x, float y, float z) : x(x), y(y), z(z) {}
+    Vec3() : x(0), y(0), z(0) {}
+    Vec3(float v) : x(v), y(v), z(v) {}
+    Vec3(float x, float y, float z) : x(x), y(y), z(z) {}
 
-    vec3 operator+(const vec3 &v) const { return {x + v.x, y + v.y, z + v.z}; }
-    vec3 operator-(const vec3 &v) const { return {x - v.x, y - v.y, z - v.z}; }
-    vec3 operator*(float s) const { return {x * s, y * s, z * s}; }
-    vec3 operator/(float s) const { return {x / s, y / s, z / s}; }
-    vec3 operator-() const
+    Vec3 operator+(const Vec3 &v) const { return {x + v.x, y + v.y, z + v.z}; }
+    Vec3 operator-(const Vec3 &v) const { return {x - v.x, y - v.y, z - v.z}; }
+    Vec3 operator*(float s) const { return {x * s, y * s, z * s}; }
+    Vec3 operator/(float s) const { return {x / s, y / s, z / s}; }
+    Vec3 operator-() const
     {
-        return vec3(-x, -y, -z);
+        return Vec3(-x, -y, -z);
     }
 
-    vec3 &operator+=(const vec3 &v)
+    Vec3 &operator+=(const Vec3 &v)
     {
         x += v.x;
         y += v.y;
@@ -70,20 +70,20 @@ struct vec3
         return std::sqrt(x * x + y * y + z * z);
     }
 
-    vec3 Normalized() const
+    Vec3 Normalized() const
     {
         float len = Length();
         if (len == 0.0f)
-            return vec3(0);
+            return Vec3(0);
         return *this / len;
     }
 
-    static float Dot(const vec3 &a, const vec3 &b)
+    static float Dot(const Vec3 &a, const Vec3 &b)
     {
         return a.x * b.x + a.y * b.y + a.z * b.z;
     }
 
-    static vec3 Cross(const vec3 &a, const vec3 &b)
+    static Vec3 Cross(const Vec3 &a, const Vec3 &b)
     {
         return {
             a.y * b.z - a.z * b.y,
@@ -92,83 +92,83 @@ struct vec3
     }
 };
 
-struct vec4
+struct Vec4
 {
     float x, y, z, w;
 
-    vec4() : x(0), y(0), z(0), w(0) {}
-    vec4(float v) : x(v), y(v), z(v), w(v) {}
-    vec4(float x, float y, float z, float w)
+    Vec4() : x(0), y(0), z(0), w(0) {}
+    Vec4(float v) : x(v), y(v), z(v), w(v) {}
+    Vec4(float x, float y, float z, float w)
         : x(x), y(y), z(z), w(w) {}
 
-    vec4(const vec3 &v, float w)
+    Vec4(const Vec3 &v, float w)
         : x(v.x), y(v.y), z(v.z), w(w) {}
 
-    vec4 operator+(const vec4 &v) const
+    Vec4 operator+(const Vec4 &v) const
     {
         return {x + v.x, y + v.y, z + v.z, w + v.w};
     }
 
-    vec4 operator-(const vec4 &v) const
+    Vec4 operator-(const Vec4 &v) const
     {
         return {x - v.x, y - v.y, z - v.z, w - v.w};
     }
 
-    vec4 operator*(float s) const
+    Vec4 operator*(float s) const
     {
         return {x * s, y * s, z * s, w * s};
     }
 
-    vec4 operator/(float s) const
+    Vec4 operator/(float s) const
     {
         return {x / s, y / s, z / s, w / s};
     }
 
-    vec3 xyz() { return vec3(x, y, z); }
-    static float Dot(const vec4 &a, const vec4 &b)
+    Vec3 xyz() { return Vec3(x, y, z); }
+    static float Dot(const Vec4 &a, const Vec4 &b)
     {
         return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
     }
 };
 
-inline vec3 operator*(float s, const vec3 &v)
+inline Vec3 operator*(float s, const Vec3 &v)
 {
     return {v.x * s, v.y * s, v.z * s};
 }
 
-struct ivec2
+struct IVec2
 {
     int x, y;
 
-    constexpr ivec2() : x(0), y(0) {}
-    constexpr ivec2(int v) : x(v), y(v) {}
-    constexpr ivec2(int x, int y) : x(x), y(y) {}
+    constexpr IVec2() : x(0), y(0) {}
+    constexpr IVec2(int v) : x(v), y(v) {}
+    constexpr IVec2(int x, int y) : x(x), y(y) {}
 
-    // Construct from vec2 (explicit on purpose)
-    explicit constexpr ivec2(const vec2 &v)
+    // Construct from Vec2 (explicit on purpose)
+    explicit constexpr IVec2(const Vec2 &v)
         : x(static_cast<int>(v.x)),
           y(static_cast<int>(v.y)) {}
 
-    constexpr ivec2 operator+(const ivec2 &v) const { return {x + v.x, y + v.y}; }
-    constexpr ivec2 operator-(const ivec2 &v) const { return {x - v.x, y - v.y}; }
-    constexpr ivec2 operator*(int s) const { return {x * s, y * s}; }
-    constexpr ivec2 operator/(int s) const { return {x / s, y / s}; }
+    constexpr IVec2 operator+(const IVec2 &v) const { return {x + v.x, y + v.y}; }
+    constexpr IVec2 operator-(const IVec2 &v) const { return {x - v.x, y - v.y}; }
+    constexpr IVec2 operator*(int s) const { return {x * s, y * s}; }
+    constexpr IVec2 operator/(int s) const { return {x / s, y / s}; }
 
-    ivec2 &operator+=(const ivec2 &v)
+    IVec2 &operator+=(const IVec2 &v)
     {
         x += v.x;
         y += v.y;
         return *this;
     }
 
-    ivec2 &operator-=(const ivec2 &v)
+    IVec2 &operator-=(const IVec2 &v)
     {
         x -= v.x;
         y -= v.y;
         return *this;
     }
 
-    static constexpr int Dot(const ivec2 &a, const ivec2 &b)
+    static constexpr int Dot(const IVec2 &a, const IVec2 &b)
     {
         return a.x * b.x + a.y * b.y;
     }

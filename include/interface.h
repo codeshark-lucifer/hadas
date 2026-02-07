@@ -5,9 +5,9 @@
 
 extern RenderData *renderData;
 
-void DrawSprite(SpriteID spriteID, vec2 pos, vec2 size);
-void DrawSprite(SpriteID spriteID, vec2 pos);
-void DrawQuad(vec2 pos, vec2 size);
+void DrawSprite(SpriteID spriteID, Vec2 pos, Vec2 size);
+void DrawSprite(SpriteID spriteID, Vec2 pos);
+void DrawQuad(Vec2 pos, Vec2 size);
 void DrawQuad(Transform transform);
 
-vec2 ScreenToWorld(Input *inputIn);
+Vec2 ScreenToWorld(Input *inputIn);

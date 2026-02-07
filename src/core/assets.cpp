@@ -17,6 +17,12 @@ Sprite getSprite(SpriteID spriteID)
         sprite.size = {16, 16};
         break;
     }
+    case SPRITE_CELESTE:
+    {
+        sprite.offset = {112, 0};
+        sprite.size = {17, 20};
+        break;
+    }
     }
     return sprite;
 }

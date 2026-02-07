@@ -103,7 +103,7 @@ bool glInit(BumpAllocator *transientStorage, RenderData *renderDataPtr)
 
   long long timestampVert = get_timestamp(VERT_SCENE_PATH);
   long long timestampFrag = get_timestamp(FRAG_SCENE_PATH);
-  glContext.shaderTimestamp = max(timestampVert, timestampFrag);
+  glContext.shaderTimestamp = mathf::max(timestampVert, timestampFrag);
 
   // --- Link Program ---
   glContext.programID = glCreateProgram();
@@ -183,7 +183,7 @@ bool glInit(BumpAllocator *transientStorage, RenderData *renderDataPtr)
   glContext.orthoProjectionID = glGetUniformLocation(glContext.programID, "projection");
   glContext.screenSizeID = glGetUniformLocation(glContext.programID, "screenSize");
 
-  vec2 screen_size = {(float)input->size.x, (float)input->size.y};
+  Vec2 screen_size = {(float)input->size.x, (float)input->size.y};
   glUniform2fv(glContext.screenSizeID, 1, &screen_size.x);
 
   glBindVertexArray(0);
@@ -242,7 +242,7 @@ void glRender(BumpAllocator *transientStorage)
           LOG_ERROR("Failed to link program: %s", log);
         }
         LOG_ASSERT(success, "Program linking failed");
-        glContext.shaderTimestamp = max(timestampVert, timestampFrag);
+        glContext.shaderTimestamp = mathf::max(timestampVert, timestampFrag);
       }
 
       glDetachShader(glContext.programID, vertShaderID);
@@ -287,7 +287,7 @@ void glRender(BumpAllocator *transientStorage)
   glUniformMatrix4fv(glContext.orthoProjectionID, 1, GL_FALSE, renderData->gameCamera.matrix().m);
 
   // Upload screen size
-  vec2 screen_size = {(float)input->size.x, (float)input->size.y};
+  Vec2 screen_size = {(float)input->size.x, (float)input->size.y};
   glUniform2fv(glContext.screenSizeID, 1, &screen_size.x);
 
   glBindVertexArray(glContext.VAO);

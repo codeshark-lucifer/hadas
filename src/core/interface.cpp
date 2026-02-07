@@ -3,9 +3,9 @@
 
 RenderData *renderData = nullptr;
 
-vec2 ScreenToWorld(Input *inputIn)
+Vec2 ScreenToWorld(Input *inputIn)
 {
-    ivec2 screenPos = inputIn->mousePos; // pivot (0,0) is top-left
+    IVec2 screenPos = inputIn->mousePos; // pivot (0,0) is top-left
     Camera2D camera = renderData->gameCamera;
 
     // Convert screen pos [0, screenSize] to [-0.5, 0.5]
@@ -19,7 +19,7 @@ vec2 ScreenToWorld(Input *inputIn)
     return {xPos, yPos};
 }
 
-void DrawSprite(SpriteID spriteID, vec2 pos, vec2 size)
+void DrawSprite(SpriteID spriteID, Vec2 pos, Vec2 size)
 {
     Sprite sprite = getSprite(spriteID);
     Transform transform = {};
@@ -32,12 +32,12 @@ void DrawSprite(SpriteID spriteID, vec2 pos, vec2 size)
 }
 
 
-void DrawSprite(SpriteID spriteID, vec2 pos)
+void DrawSprite(SpriteID spriteID, Vec2 pos)
 {
     DrawSprite(spriteID, pos);
 }
 
-void DrawQuad(vec2 pos, vec2 size)
+void DrawQuad(Vec2 pos, Vec2 size)
 {
     Transform transform = {};
     transform.pos = pos;

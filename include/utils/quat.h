@@ -4,19 +4,19 @@
 
 #define M_PI 3.14159265f
 
-struct quat
+struct Quat
 {
     float w, x, y, z;
 
-    quat() : w(1), x(0), y(0), z(0) {}
-    quat(float w, float x, float y, float z) : w(w), x(x), y(y), z(z) {}
+    Quat() : w(1), x(0), y(0), z(0) {}
+    Quat(float w, float x, float y, float z) : w(w), x(x), y(y), z(z) {}
 
-    static quat Identity()
+    static Quat Identity()
     {
-        return quat();
+        return Quat();
     }
 
-    static quat FromAxisAngle(const vec3 &axis, float radians)
+    static Quat FromAxisAngle(const Vec3 &axis, float radians)
     {
         float half = radians * 0.5f;
         float s = std::sin(half);
@@ -27,13 +27,13 @@ struct quat
             axis.z * s};
     }
 
-    quat Normalized() const
+    Quat Normalized() const
     {
         float len = std::sqrt(w * w + x * x + y * y + z * z);
         return {w / len, x / len, y / len, z / len};
     }
 
-    quat operator*(const quat &q) const
+    Quat operator*(const Quat &q) const
     {
         return {
             w * q.w - x * q.x - y * q.y - z * q.z,
@@ -41,10 +41,10 @@ struct quat
             w * q.y - x * q.z + y * q.w + z * q.x,
             w * q.z + x * q.y - y * q.x + z * q.w};
     }
-    static quat FromEuler(const vec3 &eulerDegrees)
+    static Quat FromEuler(const Vec3 &eulerDegrees)
     {
         // Convert degrees → radians
-        vec3 r = {
+        Vec3 r = {
             eulerDegrees.x * (float)M_PI / 180.0f,
             eulerDegrees.y * (float)M_PI / 180.0f,
             eulerDegrees.z * (float)M_PI / 180.0f};
@@ -57,7 +57,7 @@ struct quat
         float sz = std::sin(r.z * 0.5f);
 
         // Pitch (X), Yaw (Y), Roll (Z)
-        quat q;
+        Quat q;
         q.w = cx * cy * cz + sx * sy * sz;
         q.x = sx * cy * cz - cx * sy * sz;
         q.y = cx * sy * cz + sx * cy * sz;
@@ -67,12 +67,12 @@ struct quat
     }
 };
 
-inline vec3 operator*(const quat &q, const vec3 &v)
+inline Vec3 operator*(const Quat &q, const Vec3 &v)
 {
-    vec3 u{q.x, q.y, q.z};
+    Vec3 u{q.x, q.y, q.z};
     float s = q.w;
 
-    return u * (2.0f * vec3::Dot(u, v)) +
-           v * (s * s - vec3::Dot(u, u)) +
-           vec3::Cross(u, v) * (2.0f * s);
+    return u * (2.0f * Vec3::Dot(u, v)) +
+           v * (s * s - Vec3::Dot(u, u)) +
+           Vec3::Cross(u, v) * (2.0f * s);
 }

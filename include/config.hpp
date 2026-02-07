@@ -120,17 +120,17 @@ struct Key
 
 struct Input
 {
-    ivec2 size;
+    IVec2 size;
 
     // Screen
-    ivec2 prevMousePos;
-    ivec2 mousePos;
-    ivec2 relMouse;
+    IVec2 prevMousePos;
+    IVec2 mousePos;
+    IVec2 relMouse;
 
     // World
-    ivec2 prevMousePosWorld;
-    ivec2 mousePosWorld;
-    ivec2 relMouseWorld;
+    IVec2 prevMousePosWorld;
+    IVec2 mousePosWorld;
+    IVec2 relMouseWorld;
 
     Key keys[KEY_COUNT];
 };
@@ -162,4 +162,16 @@ inline bool IsKeyRelased(KeyCodeID keyCode)
 inline bool IsKeyDown(KeyCodeID keyCode)
 {
     return input->keys[keyCode].isDown;
+}
+
+inline Vec2 GetMoveInput()
+{
+    float x = 0, y = 0;
+
+    if (IsKeyDown(KEY_W)) y += 1;
+    if (IsKeyDown(KEY_S)) y -= 1;
+    if (IsKeyDown(KEY_D)) x += 1;
+    if (IsKeyDown(KEY_A)) x -= 1;
+
+    return {x, y};
 }

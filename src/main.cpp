@@ -1,7 +1,7 @@
 #include <utils.h>
 #include <config.hpp>
 
-Input* input = nullptr;
+Input *input = nullptr;
 #include <platform.h>
 #include <gl_renderer.hpp>
 #include <game.h>
@@ -13,9 +13,13 @@ GameState *gameState = nullptr;
 typedef decltype(Update) UpdateGameType;
 static UpdateGameType *update_game_ptr;
 
+#include <chrono>
+double getDeltaTime();
 void ReloadGameDll(BumpAllocator *transientStroage);
+
 int main()
 {
+    getDeltaTime();
     BumpAllocator transientStorage = MakeAllocator(MB(50));
     BumpAllocator persistentStorage = MakeAllocator(MB(50));
 
@@ -36,6 +40,7 @@ int main()
     PlatformFillKeyCodeLookupTable();
     Window window = CreatePlatformWindow(info);
     LOG_ASSERT(window, "Failed to create Window!");
+    SetVsync(true);
     SetTitleBarColor(window, RGB(25, 25, 25));
 
     gameState = new GameState();
@@ -45,11 +50,13 @@ int main()
 
     while (!ShouldClose())
     {
+        float deltaTime = getDeltaTime();
         ReloadGameDll(&transientStorage);
+
         WinEvent event;
         PollEvent(&event, input);
 
-        update_game_ptr(gameState, exeRenderData, input);
+        update_game_ptr(gameState, exeRenderData, input, deltaTime);
 
         glRender(&transientStorage);
         SwapBuffersWindow();
@@ -58,6 +65,17 @@ int main()
     }
     delete gameState;
     return EXIT_SUCCESS;
+}
+
+double getDeltaTime()
+{
+    static auto lastTime = std::chrono::steady_clock::now();
+    auto currentTime = std::chrono::steady_clock::now();
+
+    double delta = std::chrono::duration<double>(currentTime - lastTime).count();
+    lastTime = currentTime;
+
+    return delta;
 }
 
 void ReloadGameDll(BumpAllocator *transientStroage)

@@ -2,6 +2,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #define APIENTRY
+// #define NOMINMAX
 #define GL_GLEXT_PROTOTYPES
 #include <windows.h>
 #include <GL/glcorearb.h> // Include glcorearb.h first
@@ -22,6 +23,7 @@ struct WinEvent
 };
 
 extern Window window;
+extern PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT_ptr;
 
 // Creates a platform-specific window
 Window CreatePlatformWindow(const WinInfo &info);
@@ -37,6 +39,7 @@ bool ShouldClose();
 void *LoadGLFunc(const char *funcName);
 
 void SwapBuffersWindow();
+void SetVsync(bool vSync);
 
 bool FreeDynamicLibrary(void *dll);
 void *LoadDynamicLibrary(const char *dll);

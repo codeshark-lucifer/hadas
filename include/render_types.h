@@ -92,13 +92,13 @@ private:
 struct Camera2D
 {
     float zoom{1.0f};
-    vec2 dimentions{956.0f, 540.0f}; // screen width , hright
-    vec2 position{0.0f, 0.0f};
-    mat4 matrix()
+    Vec2 dimentions{956.0f, 540.0f}; // screen width , hright
+    Vec2 position{0.0f, 0.0f};
+    Mat4 matrix()
     {
-        mat4 p, v;
+        Mat4 p, v;
 
-        p = mat4::Ortho(
+        p = Mat4::Ortho(
             -dimentions.x * 0.5f * zoom,
             dimentions.x * 0.5f * zoom,
             -dimentions.y * 0.5f * zoom,
@@ -106,7 +106,7 @@ struct Camera2D
             -1, 1);
 
         // camera moves opposite of the world
-        v = mat4::Translate({-position.x, -position.y, 0.0f});
+        v = Mat4::Translate({-position.x, -position.y, 0.0f});
 
         return p * v;
     }
@@ -114,11 +114,11 @@ struct Camera2D
 
 struct Transform
 {
-    ivec2 ioffset;
-    ivec2 isize;
+    IVec2 ioffset;
+    IVec2 isize;
 
-    vec2 pos;
-    vec2 size;
+    Vec2 pos;
+    Vec2 size;
 };
 
 struct RenderData

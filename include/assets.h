@@ -5,13 +5,15 @@ enum SpriteID
 {
     SPRITE_WHITE,
     SPRITE_DICE,
+    SPRITE_CELESTE,
+    
     SPRITE_COUNT
 };
 
 struct Sprite
 {
-    ivec2 offset;
-    ivec2 size;
+    IVec2 offset;
+    IVec2 size;
 };
 
 Sprite getSprite(SpriteID spriteID);

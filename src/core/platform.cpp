@@ -7,8 +7,9 @@
 #include <dwmapi.h>
 
 bool g_running = false;
-HDC hdc = nullptr;
 Window window = nullptr;
+HDC hdc = nullptr;
+PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT_ptr = nullptr;
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -97,7 +98,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 HWND CreatePlatformWindow(const WinInfo &info)
 {
-    
+
     HINSTANCE instance = GetModuleHandleA(nullptr);
     WNDCLASSA wc = {};
     wc.hInstance = instance;
@@ -144,6 +145,9 @@ HWND CreatePlatformWindow(const WinInfo &info)
         return nullptr;
     LOG_ASSERT(rc, "wglCreateContext failed");
     LOG_ASSERT(wglMakeCurrent(hdc, rc), "wglMakeCurrent failed");
+
+    wglSwapIntervalEXT_ptr = (PFNWGLSWAPINTERVALEXTPROC)LoadGLFunc("wglSwapIntervalEXT");
+
     ShowWindow(window, SW_SHOW);
     UpdateWindow(window);
     g_running = true;
@@ -151,13 +155,6 @@ HWND CreatePlatformWindow(const WinInfo &info)
 }
 void PollEvent(WinEvent *event, Input *inputIn)
 {
-    LOG_ASSERT(inputIn, "Input is null"); // Reset per-frame key state
-    for (int keyCode = 0; keyCode < KEY_COUNT; keyCode++)
-    {
-        inputIn->keys[keyCode].justReleased = false;
-        inputIn->keys[keyCode].justPressed = false;
-        inputIn->keys[keyCode].halfTransitionCount = 0;
-    }
     while (PeekMessageA(&event->msg, nullptr, 0, 0, PM_REMOVE))
     {
         TranslateMessage(&event->msg);
@@ -170,7 +167,7 @@ void PollEvent(WinEvent *event, Input *inputIn)
     inputIn->mousePos.x = point.x;
     inputIn->mousePos.y = point.y;
     inputIn->relMouse = inputIn->mousePos - inputIn->prevMousePos;
-    inputIn->mousePosWorld = ivec2(ScreenToWorld(inputIn));
+    inputIn->mousePosWorld = IVec2(ScreenToWorld(inputIn));
 }
 void SetTitleBarColor(HWND hwnd, COLORREF color)
 {
@@ -195,6 +192,10 @@ void *LoadGLFunc(const char *funcName)
 }
 bool ShouldClose() { return !g_running; }
 void SwapBuffersWindow() { SwapBuffers(hdc); }
+void SetVsync(bool vSync)
+{
+    wglSwapIntervalEXT_ptr(vSync);
+}
 void *LoadDynamicLibrary(const char *dll)
 {
     HMODULE result = LoadLibraryA(dll);
